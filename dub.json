@@ -1,0 +1,9 @@
+{
+	"authors": [
+		"typohnebild"
+	],
+	"copyright": "Copyright © 2020, typohnebild",
+	"description": "My solutions for the Advent of Code 2020",
+	"license": "proprietary",
+	"name": "aoc2020"
+}
