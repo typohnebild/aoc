@@ -1,4 +1,5 @@
 module util;
+
 import std.format : format;
 import std.stdio : writeln;
 
