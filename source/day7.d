@@ -1,10 +1,13 @@
+module day7;
+import util;
+
 import std;
 
 alias Child = Tuple!(uint, string);
 alias Children = Tuple!(uint, string)[];
 alias Graph = Children[string];
 
-string[] parse_input(in string input = "input")
+string[] parse_input(in string input = defaultinput!7)
 {
     return File(input).byLine.map!(to!string).array;
 }
@@ -84,16 +87,11 @@ long solve2(const ref Graph bags, string cur)
 
 }
 
-void main()
-{
-}
-
-unittest
+void day7()
 {
     auto i = parse_input;
     auto isin_graph = i.build_isin_graph;
-    isin_graph.solve.count.writeln;
-
     auto contains_graph = i.build_contains_graph;
-    contains_graph.solve2("shiny gold").writeln;
+
+    print_result(7, isin_graph.solve.count, contains_graph.solve2("shiny gold"));
 }

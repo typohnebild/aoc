@@ -1,6 +1,9 @@
+module day16;
+import util;
+
 import std;
 
-auto parse_file(in string input = "input")
+auto parse_file(in string input = defaultinput!16)
 {
     return input.readText.splitter("\n\n")
         .map!(x => x.splitter("\n")).array;
@@ -38,7 +41,6 @@ auto solve2(in string input)
         .map!(x => x.splitter(",").map!(to!size_t).array)
         .filter!(ticket => ticket.all!(field => conditions.any!(c => c(field))));
 
-    valid_tickets.walkLength.writeln;
     size_t nooffields = conditions.walkLength;
     size_t[][] mapping;
     foreach (cond_idx, condition; enumerate(conditions))
@@ -65,13 +67,13 @@ auto solve2(in string input)
                 .map!(to!long))
             .joiner.array[idx]
     );
-    dep.writeln;
     return reduce!"a * b"(1L, dep);
 }
 
-void main()
+void day16()
 {
-    "input".solve.writeln;
+    print_result(16, defaultinput!16.solve, defaultinput!16.solve2);
+
 }
 
 unittest
@@ -80,8 +82,5 @@ unittest
     assert(c1(5) == false);
     assert(c1(34) == true);
     assert(c1(964) == true);
-    assert("test_input".solve == 71);
-    "input".solve2.writeln;
-    // "test_input2".solve2;
-
+    assert("inputs/input16_test".solve == 71);
 }

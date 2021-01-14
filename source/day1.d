@@ -1,3 +1,6 @@
+module day1;
+import util;
+
 import std.stdio;
 import std.array;
 import std.algorithm;
@@ -7,7 +10,6 @@ import std.string;
 import std.file;
 import std.exception : enforce;
 import std.format;
-import util : print_result;
 
 int[] parse(string content)
 {
@@ -19,7 +21,7 @@ int[] parse(string content)
 
 int[] read()
 {
-    return "input".readText.parse;
+    return defaultinput!1.readText.parse;
 }
 
 void find_pair(int[] list, out int lhs, out int rhs)

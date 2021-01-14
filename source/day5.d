@@ -1,3 +1,6 @@
+module day5;
+import util;
+
 import std.stdio;
 import std.file;
 import std.range;
@@ -11,7 +14,7 @@ import std.format;
 immutable ROWS = 128;
 immutable COLUMNS = 8;
 
-auto parse(string input = "input.txt")
+auto parse(string input = defaultinput!5)
 {
     return input.readText.splitter.map!strip;
 
@@ -68,23 +71,16 @@ long solve2()
     {
         if (all_ids[i] - all_ids[i - 1] != 1)
         {
-            all_ids[i - 2 .. i + 2].writeln;
+            // all_ids[i - 2 .. i + 2].writeln;
             return all_ids[i] - 1;
         }
     }
     return all_ids[$ - 1] + 1;
 }
 
-void main()
+void day5()
 {
-    writeln("Edit source/app.d to start your project.");
-}
-
-unittest
-{
-    solve.writeln;
-    solve2.writeln;
-
+    print_result(5, solve, solve2);
 }
 
 unittest

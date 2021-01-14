@@ -1,6 +1,9 @@
+module day13;
+import util;
+
 import std;
 
-auto parse(in string input = "input")
+auto parse(in string input = defaultinput!13)
 {
     auto f = File(input);
     auto arival = f.readln.strip.to!long;
@@ -14,7 +17,7 @@ auto parse(in string input = "input")
     return tuple(arival, timetable);
 }
 
-auto parse2(in string input = "input")
+auto parse2(in string input = defaultinput!13)
 {
     auto f = File(input);
     f.readln.strip.to!long;
@@ -79,20 +82,17 @@ auto solve2(string input)
         .filter!(x => x.value.isNumeric)
         .map!((x) {
             long val = x.value.to!long;
-            x.index.writeln;
             return equation((val - x.index % val) % val, val);
         }
         )
         .array;
-    equations.writeln;
     return chinese_remainder!long(equations);
 }
 
-void main()
+void day13()
 {
-    auto x = "input".parse;
-    solve(x[0], x[1]).writeln;
-    parse2.solve2().writeln;
+    auto x = defaultinput!13.parse;
+    print_result(13, solve(x[0], x[1]), parse2.solve2());
 }
 
 unittest
@@ -101,8 +101,6 @@ unittest
     assert(solve(939, [7, 13, 59, 31, 19]) == 295);
     assert("17,x,13,19".solve2 == 3417);
     assert("7,13,x,x,59,x,31,19".solve2 == 1_068_781);
-    parse2.solve2().writeln;
-
 }
 
 unittest

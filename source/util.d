@@ -2,7 +2,7 @@ module util;
 import std.format : format;
 import std.stdio : writeln;
 
-auto defaultinput(int day) = "inputs/input" ~ day;
+auto defaultinput(int day) = format!"inputs/input%d"(day);
 
 void print_result(T1, T2)(int day, T1 solution1, T2 solution2)
 {

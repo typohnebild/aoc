@@ -1,3 +1,6 @@
+module day11;
+import util;
+
 import std;
 
 enum Tile
@@ -7,7 +10,7 @@ enum Tile
     occupied = '#'
 }
 
-string[] parse(in string input = "input")
+string[] parse(in string input = defaultinput!9)
 {
     return File(input).byLine().map!(to!string).array;
 }
@@ -135,10 +138,9 @@ auto solve2(string[] field)
 
 }
 
-void main()
+void day11()
 {
-    "input".parse.solve.writeln;
-    "input".parse.solve2.writeln;
+    print_result(11, defaultinput!11.parse.solve, defaultinput!11.parse.solve2);
 }
 
 unittest

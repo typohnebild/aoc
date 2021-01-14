@@ -1,3 +1,6 @@
+module day8;
+import util;
+
 import std;
 
 enum Ops : string
@@ -9,12 +12,12 @@ enum Ops : string
 
 }
 
-string[][] parser(in string input = "input")
+string[][] parser(in string input = defaultinput!8)
 {
     return input.readText.splitter("\n").map!(x => x.splitter.array).array;
 }
 
-long solve(string input = "input")
+long solve(string input = defaultinput!8)
 {
     auto code = input.parser;
     long acc = 0;
@@ -29,7 +32,7 @@ bool simulate(string[][] code, out long acc)
     long old_cnt = 0;
     while (code[cnt].length != 0 && cnt < code.length)
     {
-        format!"cnt: %d, acc: %d op: %s"(cnt, acc, code[cnt]).writeln;
+        // format!"cnt: %d, acc: %d op: %s"(cnt, acc, code[cnt]).writeln;
         old_cnt = cnt;
         switch (code[cnt][0])
         {
@@ -54,7 +57,7 @@ bool simulate(string[][] code, out long acc)
 
 }
 
-long solve2(string input = "input")
+long solve2(string input = defaultinput!8)
 {
     string[][] code = input.parser;
     string flip(string op)
@@ -81,21 +84,14 @@ long solve2(string input = "input")
             changed_statment++;
         }
         code_copy.data[changed_statment][0] = flip(code_copy.data[changed_statment][0]);
-        format!"flip %s at %d"(code_copy.data[changed_statment], changed_statment)
-            .writeln;
+        // format!"flip %s at %d"(code_copy.data[changed_statment], changed_statment).writeln;
         changed_statment++;
     }
     while (!simulate(code_copy.data, acc));
     return acc;
 }
 
-void main()
+void day8()
 {
-    solve2().writeln;
-}
-
-unittest
-{
-    solve().writeln;
-    solve2().writeln;
+    print_result(8, solve, solve2);
 }

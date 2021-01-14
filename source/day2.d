@@ -1,9 +1,11 @@
+module day2;
+import util;
+
 import std.stdio;
 import std.regex;
 import std.file;
 import std.algorithm;
 import std.format;
-import util : print_result;
 
 mixin template unpack()
 {
@@ -34,14 +36,12 @@ bool valid2(char[] line)
 
 }
 
-ulong solve(alias func = valid1)(in string filename = "input")
+ulong solve(alias func = valid1)(in string filename = defaultinput!2)
 {
     return File(filename).byLine.count!func;
 }
 
 void day2()
 {
-    solve!valid1.writeln;
-    solve!valid2.writeln;
     print_result(2, solve!valid1, solve!valid2);
 }

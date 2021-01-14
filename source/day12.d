@@ -1,3 +1,6 @@
+module day12;
+import util;
+
 import std;
 
 enum Instruction
@@ -128,8 +131,6 @@ class Waypoint : Base
         case Instruction.Left:
             rotate((360 - val));
         }
-        write(i, val, " ");
-        this.writeln;
     }
 
     override string toString() const
@@ -162,7 +163,7 @@ class Waypoint : Base
     }
 }
 
-string[] parse(in string input = "input")
+string[] parse(in string input = defaultinput!12)
 {
     return File(input).byLine().map!(to!string).array;
 
@@ -182,10 +183,10 @@ auto solve2(in string[] instructions)
     return w.hamming_distance();
 }
 
-void main()
+void day12()
 {
-    "input".parse.solve.writeln;
-    "input".parse.solve2.writeln;
+    print_result(12, defaultinput!12.parse.solve,
+            defaultinput!12.parse.solve2);
 }
 
 unittest

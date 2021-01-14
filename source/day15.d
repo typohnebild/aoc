@@ -1,3 +1,6 @@
+module day15;
+import util;
+
 import std;
 
 size_t next(size_t[] seq)
@@ -49,10 +52,10 @@ size_t solve2(size_t[] start, size_t stop_t)
     return last;
 }
 
-void main()
+void day15()
 {
-    [12, 1, 16, 3, 11, 0].solve2(2020).writeln;
-    [12, 1, 16, 3, 11, 0].solve2(30_000_000).writeln;
+    print_result(15, [12, 1, 16, 3, 11, 0].solve2(2020), [12, 1, 16, 3, 11, 0].solve2(30_000_000));
+
 }
 
 unittest

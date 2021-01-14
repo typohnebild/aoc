@@ -1,3 +1,6 @@
+module day17;
+import util;
+
 import std;
 
 enum Cube
@@ -57,7 +60,6 @@ auto solve(size_t dim = 3)(in string init, size_t iter = 1)
     foreach (_; 0 .. iter)
     {
         auto potential = chain(pocket.keys, pocket.keys.map!(x => x.get_neigbours!dim).joiner).uniq;
-        potential.walkLength.writeln;
         auto new_active = potential.filter!((x) {
             auto active = pocket.count_active!dim(x);
             if (x in pocket)
@@ -77,10 +79,10 @@ auto solve(size_t dim = 3)(in string init, size_t iter = 1)
     return pocket.length;
 }
 
-void main()
+void day17()
 {
-    "input".readText.solve(6).writeln;
-    "input".readText.solve!4(6).writeln;
+    print_result(17, defaultinput!17.readText.solve(6),
+            defaultinput!17.readText.solve!4(6));
 }
 
 unittest

@@ -1,10 +1,12 @@
+module day3;
+import util;
+
 import std.stdio;
 import std.file;
 import std.array;
 import std.algorithm;
 import std.range;
 import std.string;
-import util;
 
 string[] read_field(string input = defaultinput!3)
 {

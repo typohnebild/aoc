@@ -1,3 +1,6 @@
+module day14;
+import util;
+
 import std;
 
 struct MyInt
@@ -114,10 +117,9 @@ auto solve2(in string input)
     return mem.byValue.sum;
 }
 
-void main()
+void day14()
 {
-    "input".solve.writeln;
-    "input".solve2.writeln;
+    print_result(14, defaultinput!14.solve, defaultinput!14.solve2);
 }
 
 unittest
@@ -131,6 +133,6 @@ unittest
 
 unittest
 {
-    assert("test_input".solve2 == 208);
+    assert("inputs/input14_test".solve2 == 208);
 
 }

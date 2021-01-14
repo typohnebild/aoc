@@ -1,3 +1,6 @@
+module day9;
+import util;
+
 import std.stdio;
 import std.file : readText;
 import std.conv : to;
@@ -6,7 +9,7 @@ import std.format;
 import std.array;
 import std.range;
 
-long[] parse_numbers(in string input = "input")
+long[] parse_numbers(in string input = defaultinput!9)
 {
     return input.readText.splitter.map!(to!long).array;
 }
@@ -58,17 +61,12 @@ long solve2(long[] numbers, long target)
     return r.minElement + r.maxElement;
 }
 
-void main()
+void day9()
 {
-}
-
-unittest
-{
-    auto numbers = "input".parse_numbers;
+    auto numbers = defaultinput!9.parse_numbers;
     auto solution1 = numbers.solve;
     auto solution2 = numbers.solve2(solution1);
-    solution1.writeln;
-    solution2.writeln;
+    print_result(9, solution1, solution2);
 }
 
 unittest

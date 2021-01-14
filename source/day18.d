@@ -1,3 +1,6 @@
+module day18;
+import util;
+
 import std;
 
 enum Op
@@ -23,7 +26,6 @@ class Expr
             return text.to!long;
         }
         sub_expression = parse_func(text);
-        // format!"%s is %d"(text, sub_expression.evaluate).writeln;
         return sub_expression.evaluate();
     }
 
@@ -130,8 +132,6 @@ auto parse2(string expr)
     expr.split_in_expr(splits, ops);
 
     auto sub_exprs = splits.map!(x => new Expr(x));
-    // sub_exprs.writeln;
-    // ops.writeln;
     Expr[] new_exprs = [sub_exprs.front];
     Op[] new_ops;
 
@@ -150,8 +150,6 @@ auto parse2(string expr)
         }
     }
     Expr ret = new_exprs.front;
-    // new_exprs.writeln;
-    // new_ops.writeln;
     foreach (index, op; new_ops.enumerate)
     {
         ret = new BinaryExpr(ret, new_exprs[index + 1], op);
@@ -159,20 +157,20 @@ auto parse2(string expr)
     return ret;
 }
 
-void main()
+void day18()
 {
-    File("input").byLine
+    auto solution1 = File(defaultinput!18).byLine
         .map!(to!string)
         .map!(x => new Expr(x).evaluate)
-        .sum
-        .writeln;
+        .sum;
+
     Expr.parse_func = &parse2;
 
-    File("input").byLine
+    auto solution2 = File(defaultinput!18).byLine
         .map!(to!string)
         .map!(x => new Expr(x).evaluate)
-        .sum
-        .writeln;
+        .sum;
+    print_result(18, solution1, solution2);
 }
 
 unittest
