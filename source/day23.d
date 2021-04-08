@@ -2,7 +2,7 @@ module day23;
 
 import util;
 import std.conv : to;
-import std.algorithm : canFind, find, map, countUntil, remove;
+import std.algorithm : canFind, find, map, countUntil, remove, among;
 import std.range;
 import std.array;
 import std.stdio;
@@ -107,15 +107,53 @@ auto solve1(in string input)
 
 auto solve2(in string input)
 {
-    return Game!true(input)
-        .dropExactly(10_000_000)
-        .front;
+    // an nice stolen solution from github
+    // https://github.com/ephemient/aoc2020/blob/main/py/src/aoc2020/day23.py
+    // the idea is storing the following number at the index of the cup
+    auto nums = input.parse;
+    auto arr = iota(1, 1_000_001).array;
+    foreach (idx, value; nums.enumerate)
+    {
+        arr[value - 1] = idx + 1 < nums.length ? nums[idx + 1] - 1 : 9;
+    }
+    arr[$ - 1] = nums[0] - 1;
+    int x = nums[0] - 1;
+    int step(int cur)
+    {
+        auto fst = arr[cur];
+        auto snd = arr[fst];
+        auto thr = arr[snd];
+        auto nxt = arr[thr];
+        auto dst = cur;
+        for (;;)
+        {
+            dst = dst > 0 ? dst - 1 : cast(int) arr.length - 1;
+            if (!dst.among(fst, snd, thr))
+            {
+                break;
+            }
+        }
+        arr[thr] = arr[dst];
+        arr[cur] = nxt;
+        arr[dst] = fst;
+        return nxt;
+    }
+
+    foreach (_; 0 .. 10_000_000)
+    {
+        x = step(x);
+    }
+
+    auto fst = arr[0];
+    auto snd = arr[fst];
+
+    return (1L + fst) * (1L + snd);
 }
 
 void day23()
 {
     auto solution1 = solve1("326519478");
-    auto solution2 = "";
+    auto solution2 = solve2("326519478");
     print_result(23, solution1, solution2);
 }
 
@@ -130,5 +168,6 @@ unittest
     assert(stateafter10 == [5, 8, 3, 7, 4, 1, 9, 2, 6]);
     assert(stateafter10.convert == "92658374");
     assert(teststring.solve1 == "67384529");
-    // solve2(teststring).writeln;
+    assert(teststring.solve2 == 149_245_887_792);
+
 }
