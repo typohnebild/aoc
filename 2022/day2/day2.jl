@@ -67,27 +67,18 @@ function choose_item(opp::Items, target_state::GameState)
     if target_state == Draw
         return opp
     end
-    if target_state == Lose
-        for pos in 0:2
-            if wins(opp, Items(pos))
-                return Items(pos)
-            end
+    for pos in 0:2
+        if game(Items(pos), opp) == target_state
+            return Items(pos)
         end
     end
-    if target_state == Win
-        for pos in 0:2
-            if wins(Items(pos), opp)
-                return Items(pos)
-            end
-        end
-    end
-
 end
+
+split_lines(file) = Iterators.map(line -> split(line, " "), eachline(file))
 
 function part1(file)
     score = 0
-    for line in eachline(file)
-        lhs, rhs = split(line, " ")
+    for (lhs, rhs) in split_lines(file)
         opp = mapping(lhs[1])
         me = mapping(rhs[1])
         new_score = points(game(me, opp)) + value(me)
@@ -98,8 +89,7 @@ end
 
 function part2(file)
     score = 0
-    for line in eachline(file)
-        lhs, rhs = split(line, " ")
+    for (lhs, rhs) in split_lines(file)
         opp = mapping(lhs[1])
         target_state = GameState(rhs[1] - 'X')
         me = choose_item(opp, target_state)
