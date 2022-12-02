@@ -34,11 +34,12 @@ end
 
 function game(me::Items, opp::Items)
     if me == opp
-        return 3
-    elseif wins(me, opp)
-        return 6
+        return Draw
+    end
+    if wins(me, opp)
+        return Win
     else
-        return 0
+        return Lose
     end
 end
 
@@ -89,7 +90,7 @@ function part1(file)
         lhs, rhs = split(line, " ")
         opp = mapping(lhs[1])
         me = mapping(rhs[1])
-        new_score = game(me, opp) + value(me)
+        new_score = points(game(me, opp)) + value(me)
         score += new_score
     end
     score
