@@ -40,3 +40,4 @@ part1_5(file) = eachline(file) .|> split_in_halves .|> find_duplicate |> Iterato
 part2_1(file) = sum(priority(badge) for badge in Iterators.flatten(intersect(f, s, t) for (f, s, t) in Elf_Iterator(file)))
 part2_2(file) = Elf_Iterator(file) |> (groups -> Iterators.map(g -> intersect(g...), groups)) |> Iterators.flatten |> (flat -> Iterators.map(badge -> priority(badge), flat)) |> sum
 part2_3(file) = Elf_Iterator(file) |> (groups -> Iterators.map(g -> intersect(g...), groups)) |> Iterators.flatten |> badge -> priority.(badge) |> sum
+part2_4(file) = Iterators.partition(eachline(file), 3) |> (groups -> Iterators.map(g -> intersect(g...), groups)) |> Iterators.flatten |> badge -> priority.(badge) |> sum
