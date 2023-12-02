@@ -13,3 +13,5 @@ aoc2020-test-*
 *.o
 *.obj
 *.lst
+build/*
+compile_flags.txt
