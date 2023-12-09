@@ -20,7 +20,7 @@ RM = rm -rf
 
 SHELL  ?= sh
 
-CXXFLAGS = -std=c++20 -O3 -Wall -Werror -Wextra -Wshadow -g
+CXXFLAGS = -std=c++23 -O3 -Wall -Werror -Wextra -Wshadow -g
 LDFLAGS =
 LDLIBS  =
 

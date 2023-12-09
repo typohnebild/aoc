@@ -11,20 +11,6 @@
 #include <unordered_map>
 #include <vector>
 
-template <typename T>
-std::ostream &operator<<(std::ostream &os, std::vector<T> vec) {
-  for (auto &e : vec) {
-    os << e << ' ';
-  }
-  return os;
-}
-template <typename T, size_t n>
-std::ostream &operator<<(std::ostream &os, std::array<T, n> arr) {
-  for (auto &e : arr) {
-    os << e << ' ';
-  }
-  return os;
-}
 using number_t = long;
 
 std::vector<number_t> getseeds(std::string_view const line) {
