@@ -3,6 +3,7 @@
 #include <fstream>
 #include <string>
 #include <vector>
+#include <array>
 
 bool read_as_list_of_strings(std::string filename,
                              std::vector<std::string> &lines);
