@@ -24,7 +24,7 @@ std::vector<number_t> getdifferences(std::vector<number_t> const &line) {
 
   std::vector<number_t> ret(line.size() - 1);
   auto minus = [](auto pair) { return pair[1] - pair[0]; };
-  auto pairs = line | std::views::slide(2) | std::vies::transform(minus);
+  auto pairs = line | std::views::slide(2) | std::views::transform(minus);
   std::ranges::copy(pairs, ret.begin());
   return ret;
 }
