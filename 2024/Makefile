@@ -14,14 +14,14 @@ E=@printf "\033[1;31m%-5s %s\033[0m\n"
 Q=
 endif
 
-CXX = clang++-16
+CXX = clang++-18
 LD = $(CXX)
 RM = rm -rf
 
 SHELL  ?= sh
 
-CXXFLAGS = -std=c++20 -O3 -Wall -Werror -Wextra -Wshadow -g
-LDFLAGS =
+CXXFLAGS = -std=c++23 -O3 -Wall -Werror -Wextra -Wshadow -stdlib=libc++ -fexperimental-library
+LDFLAGS = 
 LDLIBS  =
 
 all: $(BIN)
