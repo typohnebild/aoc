@@ -36,6 +36,6 @@ $(BUILDDIR)/util.o: src/util.cpp $(INCLUDE)
 
 clean:
 	$E "CLEAN" ""
-	$Q $(RM) $(OBJ) $(BIN)
+	$Q $(RM) $(OBJ) $(BIN) $(UTIL_O)
 
 .PHONY: all clean test
