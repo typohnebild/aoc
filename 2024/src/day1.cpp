@@ -10,6 +10,9 @@
 #include <vector>
 
 using number_t = int;
+using vec_t = std::vector<number_t>;
+namespace rng = std::ranges;
+namespace rv = std::ranges::views;
 
 std::pair<number_t, number_t> read_line(std::string_view const &line) {
   std::stringstream ss;
@@ -19,52 +22,36 @@ std::pair<number_t, number_t> read_line(std::string_view const &line) {
   return {l, r};
 }
 
-void read_lines(std::vector<std::string> const &lines,
-                std::vector<number_t> &left, std::vector<number_t> &right) {
-  left.reserve(lines.size());
-  right.reserve(lines.size());
-  std::vector<std::pair<number_t, number_t>> pairs;
-  std::ranges::transform(lines, std::back_inserter(pairs), read_line);
-  auto get_first = [](auto &p) { return p.first; };
-  auto get_second = [](auto &p) { return p.second; };
-  std::ranges::copy(std::ranges::views::transform(pairs, get_first),
-                    std::back_inserter(left));
-  std::ranges::copy(std::ranges::views::transform(pairs, get_second),
-                    std::back_inserter(right));
+std::pair<vec_t, vec_t> read_lines(std::vector<std::string> const &lines) {
+  auto get_first = [](auto &&p) { return p.first; };
+  auto get_second = [](auto &&p) { return p.second; };
+  auto left = lines | rv::transform(read_line) | rv::transform(get_first) |
+              rng::to<std::vector>();
+  auto right = lines | rv::transform(read_line) | rv::transform(get_second) |
+               rng::to<std::vector>();
+  return {left, right};
 }
 
-unsigned long part2(std::vector<std::string> const &lines) {
-  std::vector<number_t> left;
-  std::vector<number_t> right;
-  read_lines(lines, left, right);
+number_t part2(std::vector<std::string> const &lines) {
+  auto [left, right] = read_lines(lines);
   std::unordered_map<number_t, number_t> map;
-  for (auto r : right) {
-    if (auto search = map.find(r); search == map.end()) {
-      map.emplace(std::make_pair(r, 0));
-    }
-    map[r]++;
-  }
-  unsigned long ret = 0;
-  for (auto l : left) {
-    if (auto search = map.find(l); search != map.end()) {
-      ret += l * map[l];
-    }
-  }
-  return ret;
+  rng::for_each(right, [&](auto r) { map[r]++; });
+  return rng::fold_left(
+      left | rv::transform([&](auto l) { return l * map[l]; }), number_t(0),
+      std::plus<>{}
+
+  );
 }
 
-unsigned long part1(std::vector<std::string> const &lines) {
-  std::vector<number_t> left;
-  std::vector<number_t> right;
-  read_lines(lines, left, right);
-
+number_t part1(std::vector<std::string> const &lines) {
+  auto [left, right] = read_lines(lines);
   std::ranges::sort(left);
   std::ranges::sort(right);
-  unsigned long res = 0;
-  for (auto elem : std::ranges::views::zip(left, right)) {
-    res += std::abs(elem.first - elem.second);
-  }
-  return res;
+
+  return rng::fold_left(rv::zip(left, right) | rv::transform([](auto &&p) {
+                          return std::abs(p.first - p.second);
+                        }),
+                        number_t(0), std::plus{});
 }
 
 int main() {
