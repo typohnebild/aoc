@@ -8,15 +8,16 @@
 
 using lines_t = std::vector<std::string>;
 using number_t = int;
+namespace rng = std::ranges;
+namespace rv = std::ranges::views;
 
 template <typename T> int sgn(T val) { return (T(0) < val) - (val < T(0)); }
 
 auto split_to_ints(std::string_view const &line) {
-  return line | std::ranges::views::split(' ') |
-         std::ranges::views::transform([](auto &&s) {
+  return line | rv::split(' ') | rv::transform([](auto &&s) {
            return std::stoi(std::ranges::to<std::string>(s));
          }) |
-         std::ranges::to<std::vector<number_t>>();
+         rng::to<std::vector<number_t>>();
 }
 
 bool is_valid_report(std::vector<number_t> const &report, number_t &fail_pos) {
@@ -41,15 +42,10 @@ bool is_valid_report(std::vector<number_t> const &report) {
 }
 
 number_t part1(lines_t const &lines) {
-  auto x =
-      lines |
-      std::ranges::views::transform([](auto &&s) { return split_to_ints(s); }) |
-      std::ranges::to<std::vector<std::vector<number_t>>>();
-  auto y = x | std::ranges::views::transform([](auto &&l) {
-             return is_valid_report(l);
-           }) |
-           std::ranges::to<std::vector<bool>>();
-  return std::ranges::count(y, true);
+  return rng::count(
+      lines | rv::transform([](auto &&s) { return split_to_ints(s); }) |
+          rv::transform([](auto &&l) { return is_valid_report(l); }),
+      true);
 }
 
 number_t part2(lines_t const &lines) {
