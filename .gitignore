@@ -15,3 +15,4 @@ aoc2020-test-*
 *.lst
 */build/*
 compile_flags.txt
+.vscode
