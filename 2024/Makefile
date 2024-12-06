@@ -21,7 +21,7 @@ RM = rm -rf
 SHELL  ?= sh
 
 CXXFLAGS = -std=c++23 -O3 -Wall -Werror -Wextra -Wshadow -stdlib=libc++
-LDFLAGS = 
+LDFLAGS =
 LDLIBS  =
 
 all: $(BIN)
