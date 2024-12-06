@@ -106,7 +106,7 @@ number_t part2(lines_t &lines, std::vector<pos_t> &trace) {
       }
     }
   }
-  std::print("{}\n", new_obstacles);
+  // std::print("{}\n", new_obstacles);
 
   return new_obstacles.size();
 }
@@ -167,10 +167,19 @@ int main(int argc, char *argv[]) {
     lines_t lines;
     read_as_list_of_strings(file_path, lines);
     std::vector<pos_t> trace;
-    auto res = part1(lines, trace);
-    std::cout << "Part 1: " << res << std::endl;
-    auto res2 = part2(lines, trace);
-    std::cout << "Part 2: " << res2 << std::endl;
+    {
+
+      shino::precise_stopwatch stopwatch;
+      auto res = part1(lines, trace);
+      auto time = stopwatch.elapsed_time<unsigned int, std::chrono::microseconds>();
+      std::cout << "Part 1: " << res << " in " << time << " μs" << std::endl;
+    }
+    {
+      shino::precise_stopwatch stopwatch;
+      auto res2 = part2(lines, trace);
+      auto time = stopwatch.elapsed_time<unsigned int, std::chrono::microseconds>();
+      std::cout << "Part 2: " << res2 << " in " << time << " μs" << std::endl;
+    }
   }
 
   return 0;

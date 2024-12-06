@@ -1,6 +1,7 @@
 #include "../include/util.hpp"
-#include <iostream>
 #include <cstdlib>
+#include <fstream>
+#include <iostream>
 
 bool read_as_list_of_strings(std::string filename,
                              std::vector<std::string> &lines) {
