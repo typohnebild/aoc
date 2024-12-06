@@ -48,9 +48,10 @@ number_t part1(std::vector<std::string> const &lines) {
   std::ranges::sort(left);
   std::ranges::sort(right);
 
-  return rng::fold_left(rv::zip(left, right) | rv::transform([](auto &&p) {
-                          return std::abs(p.first - p.second);
-                        }),
+  return rng::fold_left(rv::zip(left, right) |
+                            rv::transform([](std::pair<number_t, number_t> p) {
+                              return std::abs(p.first - p.second);
+                            }),
                         number_t(0), std::plus{});
 }
 
