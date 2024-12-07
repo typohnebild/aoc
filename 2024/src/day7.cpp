@@ -31,8 +31,26 @@ number_t operator3(number_t x, number_t y) {
   return x * n + y;
 }
 
+bool eval(std::span<number_t> line, number_t target, number_t cur, auto &ops) {
+  if (line.empty()) {
+    return cur == target;
+  }
+  if (cur > target) {
+    return false;
+  }
+
+  auto x = ops |
+           rv::transform([&](auto &&op) { return op(cur, line.front()); }) |
+           rv::transform([&](auto new_cur) {
+             return eval(line.subspan(1), target, new_cur, ops);
+           }) |
+           rv::filter([](auto &&x) { return x; });
+
+  return !x.empty();
+}
+
 void eval(std::span<number_t> line, std::vector<vec_t> &results,
-          number_t target, auto ops) {
+          number_t target, auto &&ops) {
   if (line.empty()) {
     return;
   }
@@ -46,15 +64,16 @@ void eval(std::span<number_t> line, std::vector<vec_t> &results,
   eval(line.subspan(1), results, target, ops);
 }
 
-bool is_result(vec_t &line, auto ops) {
+bool is_result(vec_t &line, auto &ops) {
   std::vector<vec_t> results;
   results.push_back({line[1]});
   std::span operands{line.begin() + 2, line.end()};
-  eval(operands, results, line[0], ops);
-  return rng::contains(results.back(), line[0]);
+  // eval(operands, results, line[0], ops);
+  // return rng::contains(results.back(), line[0]);
+  return eval(operands, line[0], line[1], ops);
 }
 
-number_t part(lines_t &lines, auto ops) {
+number_t part(lines_t &lines, auto &ops) {
   return rng::fold_left(
       lines | rv::transform(split_line) | rv::filter([&](auto &&l) {
         return is_result(l, ops);
