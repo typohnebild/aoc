@@ -14,8 +14,7 @@ using vec_t = std::vector<number_t>;
 using lines_t = std::vector<std::string>;
 using pos_t = std::pair<number_t, number_t>;
 
-auto split_line(std::string &line) {
-  // std::print("{} \n", line);
+auto split_line(std::string_view line) {
   return line | rv::split(' ') | rv::transform([](auto &&s) {
            return std::stoull(
                s | rv::take_while([](auto &&c) { return c != ':'; }) |
@@ -32,34 +31,26 @@ number_t operator3(number_t x, number_t y) {
   return x * n + y;
 }
 
-void eval(vec_t &line, number_t cur_pos, std::vector<vec_t> &results,
-          auto ops) {
-  if (cur_pos >= number_t(line.size()) - 2) {
+void eval(std::span<number_t> line, std::vector<vec_t> &results,
+          number_t target, auto ops) {
+  if (line.empty()) {
     return;
   }
-
-  number_t rhs = line[cur_pos + 2];
-  if (cur_pos == 0) {
-    number_t lhs = line[1];
-    results.push_back(ops |
-                      rv::transform([&](auto &&op) { return op(lhs, rhs); }) |
-                      rng::to<std::vector>());
-  } else {
-    auto x =
-        results.back() | rv::transform([&](auto &&r) {
-          return ops | rv::transform([&](auto &&op) { return op(r, rhs); });
-        }) |
-        rv::join | rng::to<std::vector>();
-    // std::print("{} \n", x);
-    results.push_back(x);
-  }
-  eval(line, cur_pos + 1, results, ops);
+  results.push_back(results.back() | rv::transform([&](auto &&r) {
+                      return ops | rv::transform([&](auto &&op) {
+                               return op(r, line.front());
+                             }) |
+                             rv::filter([&](auto v) { return v <= target; });
+                    }) |
+                    rv::join | rng::to<std::vector>());
+  eval(line.subspan(1), results, target, ops);
 }
 
 bool is_result(vec_t &line, auto ops) {
   std::vector<vec_t> results;
   results.push_back({line[1]});
-  eval(line, number_t(0), results, ops);
+  std::span operands{line.begin() + 2, line.end()};
+  eval(operands, results, line[0], ops);
   return rng::contains(results.back(), line[0]);
 }
 
@@ -87,7 +78,6 @@ number_t part2(lines_t &lines) {
   return part(lines, ops);
 }
 
-// number_t part2(lines_t &lines) { return 0; }
 int main(int argc, char *argv[]) {
 
   std::string file_path = "inputs/day7/test.txt";
@@ -97,20 +87,21 @@ int main(int argc, char *argv[]) {
   {
     lines_t lines;
     read_as_list_of_strings(file_path, lines);
+
     {
 
       shino::precise_stopwatch stopwatch;
       auto res = part1(lines);
       auto time =
-          stopwatch.elapsed_time<unsigned int, std::chrono::microseconds>();
-      std::cout << "Part 1: " << res << " in " << time << " μs" << std::endl;
+          stopwatch.elapsed_time<unsigned int, std::chrono::milliseconds>();
+      std::cout << "Part 1: " << res << " in " << time << " ms" << std::endl;
     }
     {
       shino::precise_stopwatch stopwatch;
       auto res2 = part2(lines);
       auto time =
-          stopwatch.elapsed_time<unsigned int, std::chrono::microseconds>();
-      std::cout << "Part 2: " << res2 << " in " << time << " μs" << std::endl;
+          stopwatch.elapsed_time<unsigned int, std::chrono::milliseconds>();
+      std::cout << "Part 2: " << res2 << " in " << time << " ms" << std::endl;
     }
   }
 
