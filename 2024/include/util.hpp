@@ -3,6 +3,7 @@
 #include <array>
 #include <atomic>
 #include <chrono>
+#include <set>
 #include <string>
 #include <vector>
 
@@ -16,6 +17,15 @@ std::ostream &operator<<(std::ostream &os, std::vector<T> vec) {
   }
   return os;
 }
+
+template <typename T>
+std::ostream &operator<<(std::ostream &os, std::set<T> set) {
+  for (auto &e : set) {
+    os << e << ' ';
+  }
+  return os;
+}
+
 template <typename T, size_t n>
 std::ostream &operator<<(std::ostream &os, std::array<T, n> arr) {
   for (auto &e : arr) {
