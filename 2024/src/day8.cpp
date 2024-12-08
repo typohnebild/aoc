@@ -58,10 +58,8 @@ bool in_bounds(Position const &p, number_t N, number_t M) {
 
 auto get_value(lines_t const &map, Position const &p) { return map[p.x][p.y]; }
 
-number_t part1(lines_t &lines) {
+auto get_antenas(lines_t const &lines) {
   std::vector<Antena> antenas;
-  std::set<Position> antinodes;
-  // std::vector<Position> antinodes2;
   number_t N = lines.size();
   number_t M = lines[0].size();
   for (number_t i = 0; i < N; i++) {
@@ -71,7 +69,14 @@ number_t part1(lines_t &lines) {
       }
     }
   }
-  std::cout << antenas << std::endl;
+  return antenas;
+}
+
+number_t part1(lines_t &lines) {
+  std::set<Position> antinodes;
+  number_t N = lines.size();
+  number_t M = lines[0].size();
+  auto antenas = get_antenas(lines);
   for (auto a1 = std::begin(antenas); a1 != std::end(antenas); a1++) {
     for (auto a2 = std::next(a1); a2 != std::end(antenas); a2++) {
       if (a1->frequency == a2->frequency) {
@@ -87,24 +92,35 @@ number_t part1(lines_t &lines) {
       }
     }
   }
-  std::cout << "Antinodes " << antinodes << std::endl;
-  std::cout << std::endl;
-  for (auto const &a : antinodes) {
-    lines[a.x][a.y] = '#';
-  }
-
-  number_t lnr = 0;
-  for (auto &l : lines) {
-    std::cout << std::setfill('0') << std::setw(2) << lnr++ << "|" << l
-              << std::endl;
-  }
 
   return antinodes.size();
 }
 
-// number_t part2(lines_t &lines) {
-//   return 0;
-// }
+number_t part2(lines_t &lines) {
+  std::set<Position> antinodes;
+  number_t N = lines.size();
+  number_t M = lines[0].size();
+  auto antenas = get_antenas(lines);
+  for (auto a1 = std::begin(antenas); a1 != std::end(antenas); a1++) {
+    for (auto a2 = std::next(a1); a2 != std::end(antenas); a2++) {
+      if (a1->frequency == a2->frequency) {
+        auto diff = a2->pos - a1->pos;
+        auto option1 = a1->pos;
+        while (in_bounds(option1, N, M)) {
+          antinodes.emplace(option1);
+          option1 = option1 - diff;
+        }
+        auto option2 = a2->pos;
+        while (in_bounds(option2, N, M)) {
+          antinodes.emplace(option2);
+          option2 = option2 + diff;
+        }
+      }
+    }
+  }
+
+  return antinodes.size();
+}
 
 int main(int argc, char *argv[]) {
 
@@ -113,25 +129,24 @@ int main(int argc, char *argv[]) {
     file_path = argv[1];
   }
   {
+
     lines_t lines;
     read_as_list_of_strings(file_path, lines);
-
     {
 
       shino::precise_stopwatch stopwatch;
       auto res = part1(lines);
       auto time =
-          stopwatch.elapsed_time<unsigned int, std::chrono::milliseconds>();
-      std::cout << "Part 1: " << res << " in " << time << " ms" << std::endl;
+          stopwatch.elapsed_time<unsigned int, std::chrono::microseconds>();
+      std::cout << "Part 1: " << res << " in " << time << " μs" << std::endl;
     }
-    // {
-    //   shino::precise_stopwatch stopwatch;
-    //   auto res2 = part2(lines);
-    //   auto time =
-    //       stopwatch.elapsed_time<unsigned int, std::chrono::milliseconds>();
-    //   std::cout << "Part 2: " << res2 << " in " << time << " ms" <<
-    //   std::endl;
-    // }
+    {
+      shino::precise_stopwatch stopwatch;
+      auto res2 = part2(lines);
+      auto time =
+          stopwatch.elapsed_time<unsigned int, std::chrono::microseconds>();
+      std::cout << "Part 2: " << res2 << " in " << time << " μs" << std::endl;
+    }
   }
 
   return 0;
