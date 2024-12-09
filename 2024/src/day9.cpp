@@ -56,25 +56,17 @@ std::pair<number_t, vec_t> get_memory(lines_t const &lines) {
 
 number_t get_checksum(std::vector<number_t> const &memory) {
 
-  number_t ret = 0;
-  std::vector<number_t> a;
-  for (number_t i = 0; i < number_t(memory.size()); i++) {
-    if (memory[i] != FREE) {
-      ret += (i * memory[i]);
+  auto eval_checksum = [](auto &&p) {
+    auto [idx, m] = p;
+    if (m != FREE) {
+      return idx * (m);
     }
-  }
-  return ret;
-  // auto eval_checksum = [](auto &&p) {
-  //   auto [idx, m] = p;
-  //   if (m != FREE) {
-  //     return idx * (m);
-  //   }
-  //   return number_t(0);
-  // };
-  //
-  // return rng::fold_left(rv::zip(rv::iota(0), memory) |
-  //                           rv::transform(eval_checksum),
-  //                       number_t(0), std::plus{});
+    return number_t(0);
+  };
+
+  return rng::fold_left(rv::zip(rv::iota(0), memory) |
+                            rv::transform(eval_checksum),
+                        number_t(0), std::plus{});
 }
 
 number_t part1(lines_t &lines) {
@@ -100,8 +92,9 @@ number_t part2(lines_t &lines) {
   auto [last_non_free, memory] = get_memory(lines);
   // print_memory(memory);
 
-  for (number_t i = number_t(memory.size()) - 1; i > 0; i--) {
+  for (number_t i = number_t(memory.size()) - 1; i > 0; ) {
     if (memory[i] == FREE) {
+      i--;
       continue;
     }
     number_t offset = (memory.size() - i) - 1;
@@ -119,32 +112,19 @@ number_t part2(lines_t &lines) {
     // std::print("{} {}: Found at {} {} -> {} {} size {} at {}\n", i, offset,
     //            file_start, file, free_space_start, free_space, size,
     //            memory[i]);
+    number_t k = i;
     if (free_space_size >= size && file_start > free_space_start) {
       for (auto &f : free_space) {
         // std::print("Swapping {} by {}\n", f, memory[i]);
-        f = memory[i];
-      }
-      for (number_t k = 0; k < number_t(size); k++) {
         // std::print("Overwritting {} by {}\n", memory[i - k], FREE);
-        memory[i - k] = FREE;
+        f = memory[k];
+        memory[k--] = FREE;
       }
-
-      // print_memory(memory);
     }
 
-    i -= (size - 1);
+    i -= (size);
   }
-
-  auto r = rv::zip(rv::iota(0), memory) | rv::transform([](auto &&p) {
-             auto [idx, m] = p;
-             if (m != FREE) {
-
-               return idx * (m);
-             }
-             return number_t(0);
-           });
-
-  return rng::fold_left(r, number_t(0), std::plus{});
+  return get_checksum(memory);
 }
 
 int main(int argc, char *argv[]) {
