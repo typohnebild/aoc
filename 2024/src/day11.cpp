@@ -45,24 +45,6 @@ auto blink(number_t stone) {
   return vec_t{stone * number_t(2024)};
 }
 
-auto blink_rec(number_t stone, number_t blink) {
-  if (blink == 0) {
-    return 1;
-  }
-  if (stone == 0) {
-    return blink_rec(1, blink - 1);
-  }
-  number_t digits = count_digits(stone);
-  // std::print("{} -> {}\n", stone, digits);
-  if (digits % 2 == 0) {
-    number_t half_digits = digits / 2;
-    number_t first_half = stone / number_t(std::pow(10, half_digits));
-    number_t second_half = stone % number_t(std::pow(10, half_digits));
-    return blink_rec(first_half, blink - 1) + blink_rec(second_half, blink - 1);
-  }
-  return blink_rec(stone * number_t(2024), blink - 1);
-}
-
 number_t part1(lines_t const &lines) {
   auto i = split_to_ints(lines[0]);
   number_t const blinks = 25;
@@ -83,7 +65,6 @@ number_t part2(lines_t const &lines) {
   }
   for (number_t b = 0; b < blinks; b++) {
     std::unordered_map<number_t, number_t> map_new;
-    std::print("{}\n", map);
     for (auto [stone, count] : map) {
       number_t digits = count_digits(stone);
       if (stone == 0) {
