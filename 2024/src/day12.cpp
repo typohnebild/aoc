@@ -1,6 +1,7 @@
 #include "../include/util.hpp"
 
 #include <algorithm>
+#include <cassert>
 #include <functional>
 #include <iomanip>
 #include <iostream>
@@ -35,6 +36,14 @@ struct Grid {
     std::print("\n");
   }
   bool same(pos_t const &lhs, pos_t const &rhs) { return get(lhs) == get(rhs); }
+  bool not_same(pos_t &cur, pos_t const &rhs) {
+    // assumes that cur is valid position
+    assert(in_bounds(cur));
+    if (!in_bounds(rhs)) {
+      return true;
+    }
+    return get(cur) != get(rhs);
+  }
 
   std::vector<std::string> data_;
   number_t N;
@@ -50,6 +59,10 @@ const std::vector<pos_t> dirs = {
 
 pos_t operator+(pos_t const &lhs, pos_t const &rhs) {
   return {lhs.first + rhs.first, lhs.second + rhs.second};
+}
+
+pos_t operator-(pos_t const &lhs, pos_t const &rhs) {
+  return {lhs.first - rhs.first, lhs.second - rhs.second};
 }
 
 number_t part1(lines_t const &lines) {
@@ -96,6 +109,10 @@ number_t part1(lines_t const &lines) {
   return ret;
 }
 
+number_t diff(pos_t const &lhs, pos_t const &rhs) {
+  return std::abs(lhs.first - rhs.first) + std::abs(lhs.second - rhs.second);
+}
+
 number_t part2(lines_t const &lines) {
   Grid grid(lines);
   // grid.print();
@@ -103,12 +120,12 @@ number_t part2(lines_t const &lines) {
   for (number_t j = 0; j < grid.N; j++) {
     visited.push_back(std::vector<bool>(grid.M, false));
   }
-  // struct res{
-  //   number_t area{0};
-  //   std::vector<number_t> horizontal;
-  //   std::vector<number_t> vertical;
-  //
-  // };
+  struct Region {
+    char plant;
+    number_t area{0};
+    std::vector<pos_t> fields;
+  };
+  std::vector<Region> regions;
   number_t ret = 0;
   for (number_t i = 0; i < grid.N; i++) {
     for (number_t j = 0; j < grid.M; j++) {
@@ -118,74 +135,55 @@ number_t part2(lines_t const &lines) {
       std::vector<pos_t> stack;
       stack.push_back({i, j});
       char cur_plant = grid.get(i, j);
-      number_t area = 0;
-      number_t perimeter = 0;
-      std::vector<pos_t> vertical;
-      std::vector<pos_t> horizontal;
+      Region r{cur_plant, 0, std::vector<pos_t>()};
       while (!stack.empty()) {
         auto cur = stack.back();
         stack.pop_back();
-        area++;
         visited[cur.first][cur.second] = true;
-        auto search_dirs =
-            (i != 0 && j != 0) ? rv::take(dirs, 2) : rv::take(dirs, 4);
-        for (auto const &dir : search_dirs) {
+        r.area++;
+        r.fields.push_back(cur);
+        for (auto const &dir : dirs) {
           auto new_pos = cur + dir;
           if (grid.in_bounds(new_pos) && grid.same(cur, new_pos)) {
             if (!visited[new_pos.first][new_pos.second] &&
                 !rng::contains(stack, new_pos)) {
               stack.push_back(new_pos);
             }
-          } else {
-            if (dir.first != 0) {
-              vertical.emplace_back(new_pos);
-            } else {
-              horizontal.emplace_back(new_pos);
-            }
           }
         }
       }
-      // perimeter = i_sides.size() + j_sides.size();
-      // auto vs = vertical | rng::to<std::vector>();
-      // auto hv = horizontal | rng::to<std::vector>();
-      rng::sort(vertical);
-      // rng::sort(horizontal);
-      // std::print("{} {}", vertical, horizontal);
-      auto c = vertical | rv::chunk_by([](auto &&a1, auto &&a2) {
-                 return a1.first == a2.first;
-               });
-      std::print("vertical\n");
-      for (auto &&line : c) {
-        auto cs = line | rv::chunk_by([](auto &&a1, auto &&a2) {
-                    return a1.second + 1 == a2.second;
-                  }) |
-                  rng::to<std::vector>();
-        std::print("{}: {}\n", cur_plant, cs);
-        perimeter += cs.size();
-      }
-      rng::sort(horizontal, [](auto &&a1, auto &&a2) {
-        return a1.second < a2.second ||
-               (a1.second == a2.second && a1.first < a2.first);
-      });
-      auto h = horizontal | rv::chunk_by([](auto &&a1, auto &&a2) {
-                 return a1.second == a2.second;
-               });
-
-      std::print("horizontal\n");
-      for (auto &&line : h) {
-        auto cs = line | rv::chunk_by([](auto &&a1, auto &&a2) {
-                    return a1.first + 1 == a2.first;
-                  }) |
-                  rng::to<std::vector>();
-        std::print("{}\n", cs);
-        perimeter += cs.size();
-      }
-      // std::print("{}\n", c);
-
-      std::print("{} {}: area: {} perimeter:{}\n", pos_t{i, j}, cur_plant, area,
-                 perimeter);
-      ret += (perimeter * area);
+      regions.push_back(r);
     }
+  }
+
+  constexpr pos_t diag[4] = {
+      {1, 1},
+      {1, -1},
+      {-1, 1},
+      {-1, -1},
+
+  };
+  for (auto &r : regions) {
+
+    number_t sides = 0;
+    for (auto &cur : r.fields) {
+      for (auto const &dir : diag) {
+        auto d = cur + dir;
+        auto n1 = cur + pos_t(dir.first, 0);
+        auto n2 = cur + pos_t(0, dir.second);
+        if (!rng::contains(r.fields, d)) {
+          if ((grid.not_same(cur, n1) && grid.not_same(cur, n2)) ||
+              (!grid.not_same(cur, n1) && !grid.not_same(cur, n2))) {
+            sides++;
+          }
+        } else {
+          if (grid.not_same(cur, n1) && grid.not_same(cur, n2)) {
+            sides++;
+          }
+        }
+      }
+    }
+    ret += (r.area * sides);
   }
   return ret;
 }
